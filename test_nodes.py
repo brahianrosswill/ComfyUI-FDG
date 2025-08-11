@@ -17,6 +17,36 @@ class TestFDGNode(unittest.TestCase):
         self.assertAlmostEqual(scales[0], 10.0)
         self.assertAlmostEqual(scales[-1], 1.0)
 
+    def test_create_guidance_scales_exponential(self):
+        scales = create_guidance_scales(10.0, 1.0, 4, "exponential")
+        self.assertEqual(len(scales), 4)
+        self.assertAlmostEqual(scales[0], 10.0)
+        self.assertAlmostEqual(scales[-1], 1.0)
+
+    def test_create_guidance_scales_quadratic_in(self):
+        scales = create_guidance_scales(10.0, 1.0, 4, "quadratic_in")
+        self.assertEqual(len(scales), 4)
+        self.assertAlmostEqual(scales[0], 10.0)
+        self.assertAlmostEqual(scales[-1], 1.0)
+
+    def test_create_guidance_scales_quadratic_out(self):
+        scales = create_guidance_scales(10.0, 1.0, 4, "quadratic_out")
+        self.assertEqual(len(scales), 4)
+        self.assertAlmostEqual(scales[0], 10.0)
+        self.assertAlmostEqual(scales[-1], 1.0)
+
+    def test_create_guidance_scales_cubic_in(self):
+        scales = create_guidance_scales(10.0, 1.0, 4, "cubic_in")
+        self.assertEqual(len(scales), 4)
+        self.assertAlmostEqual(scales[0], 10.0)
+        self.assertAlmostEqual(scales[-1], 1.0)
+
+    def test_create_guidance_scales_cubic_out(self):
+        scales = create_guidance_scales(10.0, 1.0, 4, "cubic_out")
+        self.assertEqual(len(scales), 4)
+        self.assertAlmostEqual(scales[0], 10.0)
+        self.assertAlmostEqual(scales[-1], 1.0)
+
     def test_create_guidance_scales_single_level(self):
         scales = create_guidance_scales(10.0, 1.0, 1)
         self.assertEqual(scales, [10.0])
