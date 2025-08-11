@@ -85,11 +85,21 @@ def create_guidance_scales(high_scale, low_scale, levels, method="linear"):
     if levels == 1:
         return [high_scale]
 
+    t = torch.linspace(0, 1, levels)
     if method == "linear":
-        scales = torch.linspace(high_scale, low_scale, levels)
+        scales = high_scale + t * (low_scale - high_scale)
     elif method == "cosine":
-        t = torch.linspace(0, 1, levels)
         scales = low_scale + (high_scale - low_scale) * 0.5 * (1 + torch.cos(t * math.pi))
+    elif method == "exponential":
+        scales = high_scale * (low_scale / high_scale) ** t
+    elif method == "quadratic_in":
+        scales = high_scale + (low_scale - high_scale) * t ** 2
+    elif method == "quadratic_out":
+        scales = high_scale + (low_scale - high_scale) * (-t * (t - 2))
+    elif method == "cubic_in":
+        scales = high_scale + (low_scale - high_scale) * t ** 3
+    elif method == "cubic_out":
+        scales = high_scale + (low_scale - high_scale) * ((t - 1) ** 3 + 1)
     else:
         raise ValueError(f"Unknown interpolation method: {method}")
 
@@ -125,7 +135,7 @@ class FDGNode:
                     "max": 50,
                     "step": 1
                 }),
-                "interpolation_method": (["linear", "cosine"],),
+                "interpolation_method": (["linear", "cosine", "exponential", "quadratic_in", "quadratic_out", "cubic_in", "cubic_out"],),
                 "parallel_weights": ("STRING", {
                     "default": "1.0,1.0,1.0,1.0",
                     "multiline": False
@@ -145,7 +155,7 @@ class FDGNode:
         # Parse the parallel_weights string into a list of floats
         try:
             parallel_weights_list = [float(w.strip()) for w in parallel_weights.split(',')]
-        except:
+        except ValueError:
             print("FDG: Invalid parallel_weights format. Using default [1.0] * levels.")
             parallel_weights_list = [1.0] * levels
 
